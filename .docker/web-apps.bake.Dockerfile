@@ -30,7 +30,7 @@ FROM web-base AS web-apps
         npm install
 
 
-    COPY web-apps/ /app
+    COPY ./ /app
 
     ENV PRODUCT_VERSION=${PRODUCT_VERSION}
     ENV BUILD_ROOT=${BUILD_ROOT}
