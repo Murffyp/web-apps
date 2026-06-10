@@ -21,23 +21,23 @@ FROM web-base AS web-apps
     ARG PRODUCT_VERSION
     ARG BUILD_ROOT=/package
 
-    COPY web-apps/build/package*.json /app/build/
-    COPY web-apps/build/sprites/package*.json /app/build/sprites/
-    COPY web-apps/build/plugins/grunt-inline/ /app/build/plugins/grunt-inline/
+    COPY build/package*.json /apps/build/
+    COPY build/sprites/package*.json /apps/build/sprites/
+    COPY build/plugins/grunt-inline/ /apps/build/plugins/grunt-inline/
 
     RUN --mount=type=cache,target=/root/.npm \
-        cd app/build && \
+        cd apps/build && \
         npm install
 
 
-    COPY ./ /app
+    COPY . /apps
 
     ENV PRODUCT_VERSION=${PRODUCT_VERSION}
     ENV BUILD_ROOT=${BUILD_ROOT}
 
-    RUN cd app/translation && \
+    RUN cd apps/translation && \
         python3 merge_and_check.py
 
     ARG TARGETARCH
-    RUN cd app/build && \
+    RUN cd apps/build && \
         THEME=euro-office grunt $(if [ "$TARGETARCH" = "arm64" ]; then echo "--skip-imagemin"; fi)
