@@ -1,0 +1,32 @@
+name: Build Web-Apps Docker (Local Use)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./.docker/web-apps.bake.Dockerfile
+          push: false
+          load: true
+          tags: web-apps:latest
+      
+      - name: Export image as tarball
+        run: docker save web-apps:latest -o web-apps-image.tar
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-apps-docker-image
+          path: web-apps-image.tar
+          retention-days: 30
